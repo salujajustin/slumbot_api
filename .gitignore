@@ -1,0 +1,4 @@
+Pipfile
+Pipfile.lock
+run.sh
+slumbot_api_cpp/bin/*
