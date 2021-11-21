@@ -2,3 +2,5 @@ Pipfile
 Pipfile.lock
 run.sh
 slumbot_api_cpp/bin/*
+slumbot_api_cpp/cmake-build-debug/*
+slumbot_api_cpp/.idea/*

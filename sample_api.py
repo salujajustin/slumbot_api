@@ -329,12 +329,12 @@ def main():
     args = parser.parse_args()
     username = args.username
     password = args.password
+    pudb.set_trace()
     if username and password:
         token = Login(username, password)
     else:
         token = None
 
-    pudb.set_trace()
     # To avoid SSLError:
     #   import urllib3
     #   urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
