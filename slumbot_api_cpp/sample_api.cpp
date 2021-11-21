@@ -1,40 +1,47 @@
 #include <string>
 #include <iostream>
 #include <sstream>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/json_parser.hpp>
 
+#define CPPHTTPLIB_OPENSSL_SUPPORT
+#include "httplib.h"
 #include "cmdline.h"
-#include "HTTPRequest.hpp"
 
 #define NUM_STREETS 4
 #define SMALL_BLIND 50
 #define BIG_BLIND 100
 #define STACK_SIZE 20000
 
-std::string login(const std::string &username, const std::string &password) {
-    
-    
-    try
-    {
-        http::Request request{"http://slumbot.com/api/login"};
-        std::ostringstream oss;
-        oss << "{\"username\": " << username << ", \"password\": " << password << "}";
-        const std::string body = oss.str(); 
-        const auto response = request.send("POST", body, {
-            "Content-Type: application/json"
-        });
 
-        if (response.status != http::Response::Ok) {
-            std::cout << "Status code: " << response.status << std::endl;
-            std::cout << "Error desc: " << response.description << std::endl;
-            exit(-1);
-        } 
-        std::cout << std::string{response.body.begin(), response.body.end()} << '\n'; // print the result
+std::string login(const std::string &username, const std::string &password) {
+ 
+    boost::property_tree::ptree root;
+    root.put("username", username);
+    root.put("password", password);
+    std::ostringstream oss;
+    boost::property_tree::write_json(oss, root);
+    std::cout << oss.str() << std::endl;
+    
+    // Set up client with or without SSL
+    // httplib::Client cli("https://slumbot.com");   
+    httplib::SSLClient cli("slumbot.com");   
+    
+    const std::string body = "{\"username\": \"TestBot\", \"password\": \"TestBot\"}";
+    auto res = cli.Post("/api/login", oss.str(), "application/json");
+    bool success = (res->status == 200) ? 1 : 0;
+
+    if (!success) {
+        std::cout << "Status code: " << res->status << std::endl;
+        auto err = static_cast<int>(res.error());
+        std::cout << "Error response: " << err << std::endl;
+        exit(-1);
     }
-    catch (const std::exception& e)
-    {
-        std::cerr << "Request failed, error: " << e.what() << '\n';
-    }  
-    return "guh";
+
+    std::cout << res->status << std::endl;
+    std::cout << res->body << std::endl;
+
+    return "Place token value here";
 }
 
 int main(int argc, char *argv[]) {
