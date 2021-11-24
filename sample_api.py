@@ -50,6 +50,7 @@ def ParseAction(action):
       chips put into the pot.
     Handles action with or without a final '/'; e.g., "ck" or "ck/".
     """
+    pudb.set_trace()
     st = 0
     street_last_bet_to = BIG_BLIND
     total_last_bet_to = BIG_BLIND
@@ -329,7 +330,6 @@ def main():
     args = parser.parse_args()
     username = args.username
     password = args.password
-    #  pudb.set_trace()
     if username and password:
         token = Login(username, password)
     else:
